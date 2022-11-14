@@ -49,7 +49,7 @@ defmodule Bitvector do
   ## Examples
 
   iex> bv = for byte <- 1..32, into: <<>>, do: <<byte>>
-  ...> Bitvector.calc_cumulative_ranks(bv)
+  ...> Bitvector.build_cumulative_ranks(bv)
   <<0, 13, 33, 54>>
 
   """

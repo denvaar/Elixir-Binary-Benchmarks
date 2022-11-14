@@ -73,7 +73,16 @@ defmodule BinaryBenchmark do
 
   So, it looks like accessing both bits and bytes has the same runtime performance no matter what the size of the binary is. This shouldn't come as much surprise since this is just pattern matching, but it still feels like a neat trick.
 
-  I'm not sure why, but access is slightly quicker on bits than bytes.
+  I'm not sure why, but access is slightly quicker on bits than bytes. However, the Erlang docs say that, "Although the majority of functions could be implemented using bit-syntax, the functions in this library are highly optimized and are expected to either execute faster or consume less memory (or both) than a counterpart written in pure Erlang."
+
+  So, I tried again using `:binary.at/2` and it did speed it up to 83 ns.
+
+  Efficient Random access is all that is needed to create the first useful application of a bit vector that I wanted to highlight: A Bloom Filter.
+
+  ## Bloom Filter
+
+  A Bloom Filter can be used to answer membership queries, but the caveat is that can only tell you with certainty if a query is _not_ part of a set. In other words, "Possibly a member of the set", or, "Not a member of the set".
+
 
   How does this compare to traditional sequences?
 
@@ -123,7 +132,8 @@ defmodule BinaryBenchmark do
 
   def access_random_bytes(data, seq) do
     Enum.map(seq, fn index ->
-      <<_head_offset::binary-size(index), target_item::binary-size(1), _tail::binary()>> = data
+      # <<_head_offset::binary-size(index), target_item::binary-size(1), _tail::binary()>> = data
+      target_item = :binary.at(data, index)
 
       target_item
     end)
